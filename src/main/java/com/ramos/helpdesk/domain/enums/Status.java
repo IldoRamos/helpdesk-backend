@@ -19,7 +19,7 @@ ABERTO(0,"ROLE_ABERTO"), ANDAMENTO(1,"ROLE_ANDAMENTO"), ENCERRADO(2,"ROLE_ENCERR
 		return descricao;
 	}
 	
-	private static Status toEnum(Integer cod) {
+	public static Status toEnum(Integer cod) {
 		if(cod==null) {
 			return null;
 		}

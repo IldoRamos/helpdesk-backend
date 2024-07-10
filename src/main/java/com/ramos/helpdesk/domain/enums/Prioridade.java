@@ -1,7 +1,7 @@
 package com.ramos.helpdesk.domain.enums;
 
 public enum Prioridade {
-ABERTO(0,"ROLE_ABERTO"), ANDAMENTO(1,"ROLE_ANDAMENTO"), ENCERRADO(2,"ROLE_ENCERRADO");
+BAIXA(0,"ROLE_BAIXA"), MEDIA(1,"ROLE_MEDIA"), ALTA(2,"ROLE_MEDIA");
 	
 	private Integer codigo;
 	private String descricao;
@@ -19,7 +19,7 @@ ABERTO(0,"ROLE_ABERTO"), ANDAMENTO(1,"ROLE_ANDAMENTO"), ENCERRADO(2,"ROLE_ENCERR
 		return descricao;
 	}
 	
-	private static Prioridade toEnum(Integer cod) {
+	public static Prioridade toEnum(Integer cod) {
 		if(cod==null) {
 			return null;
 		}
@@ -29,7 +29,7 @@ ABERTO(0,"ROLE_ABERTO"), ANDAMENTO(1,"ROLE_ANDAMENTO"), ENCERRADO(2,"ROLE_ENCERR
 			}
 		}
 		
-		throw new IllegalArgumentException("Status invalido");
+		throw new IllegalArgumentException("Prioridade invalido");
 	}
 	
 }
