@@ -7,6 +7,8 @@ import org.springframework.context.annotation.Profile;
 
 import com.ramos.helpdesk.service.DBService;
 
+import jakarta.annotation.PostConstruct;
+
 @Configuration
 @Profile("test")
 public class TestConfig {
@@ -14,8 +16,7 @@ public class TestConfig {
 	@Autowired
 	private DBService dbService;
 
-  
-	@Bean
+	@PostConstruct
     public void instanciaDB() {
 		this.dbService.instaciaDB();
 	}
