@@ -4,22 +4,18 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.ramos.helpdesk.domain.Pessoa;
 import com.ramos.helpdesk.domain.Tecnico;
 import com.ramos.helpdesk.domain.enums.Perfil;
 
-public class TecnicoDTO implements Serializable {
+public class TecnicoDTO extends Pessoa implements Serializable{
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	
 	protected Integer id;
-	
 	protected String nome; 
 	protected String cpf;
 	protected String email;
@@ -29,7 +25,7 @@ public class TecnicoDTO implements Serializable {
 	protected LocalDate dataCriacao = LocalDate.now();
 	public TecnicoDTO() {
 		super();
-		// TODO Auto-generated constructor stub
+		addPerfis(Perfil.CLIENTE);
 	}
 	public TecnicoDTO(Tecnico obj) {
 		super();
@@ -41,6 +37,7 @@ public class TecnicoDTO implements Serializable {
 		this.perfis = obj.getPerfis().stream()
 				.map(x-> x.getCodigo()).collect(Collectors.toSet());
 		this.dataCriacao = obj.getDataCriacao();
+		addPerfis(Perfil.CLIENTE);
 	}
 	public Integer getId() {
 		return id;
@@ -84,7 +81,4 @@ public class TecnicoDTO implements Serializable {
 	public void setDataCriacao(LocalDate dataCriacao) {
 		this.dataCriacao = dataCriacao;
 	}
-	
-	
-	
 }
