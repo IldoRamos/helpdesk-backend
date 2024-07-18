@@ -11,21 +11,26 @@ import com.ramos.helpdesk.domain.Pessoa;
 import com.ramos.helpdesk.domain.Tecnico;
 import com.ramos.helpdesk.domain.enums.Perfil;
 
-public class TecnicoDTO extends Pessoa implements Serializable{
+import jakarta.validation.constraints.NotNull;
+
+public class TecnicoDTO  implements Serializable{
 
 	private static final long serialVersionUID = 1L;
 	
 	protected Integer id;
+	@NotNull(message = "O campo NOME é requerido")
 	protected String nome; 
+	@NotNull(message = "O campo CPF é requerido")
 	protected String cpf;
+	@NotNull(message = "O campo Email é requerido")
 	protected String email;
+	@NotNull(message = "O campo Senha é requerido")
 	protected String senha;
 	protected Set<Integer> perfis = new HashSet<>();
 	@JsonFormat(pattern = "dd/MM/yyyy")	
 	protected LocalDate dataCriacao = LocalDate.now();
 	public TecnicoDTO() {
 		super();
-		addPerfis(Perfil.CLIENTE);
 	}
 	public TecnicoDTO(Tecnico obj) {
 		super();
@@ -37,7 +42,6 @@ public class TecnicoDTO extends Pessoa implements Serializable{
 		this.perfis = obj.getPerfis().stream()
 				.map(x-> x.getCodigo()).collect(Collectors.toSet());
 		this.dataCriacao = obj.getDataCriacao();
-		addPerfis(Perfil.CLIENTE);
 	}
 	public Integer getId() {
 		return id;
