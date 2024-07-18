@@ -41,6 +41,12 @@ public class Chamado implements Serializable{
 	@ManyToOne
 	@JoinColumn(name = "cliente_id")
 	private Cliente cliente;
+	
+	
+	public Chamado() {
+		super();
+	}
+
 	public Chamado(Integer id, Prioridade prioridade, Status status, String titulo, String observacoes, Tecnico tecnico,
 			Cliente cliente) {
 		super();
@@ -52,6 +58,7 @@ public class Chamado implements Serializable{
 		this.tecnico = tecnico;
 		this.cliente = cliente;
 	}
+	
 	public Integer getId() {
 		return id;
 	}

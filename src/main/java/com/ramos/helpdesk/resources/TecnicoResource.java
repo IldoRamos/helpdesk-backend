@@ -6,9 +6,11 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,7 +36,6 @@ public class TecnicoResource {
 		return ResponseEntity.ok().body(new TecnicoDTO(obj));
 	} 
 	
-	
 	@GetMapping
 	public ResponseEntity<List<TecnicoDTO>> findAll(){
 		List<Tecnico> lista = service.findAll();
@@ -53,4 +54,17 @@ public class TecnicoResource {
 		return ResponseEntity.created(uri).build();
 	}
 	
+	@PutMapping(value = "/{id}")
+	public ResponseEntity<TecnicoDTO> update(@PathVariable Integer id, @Valid @RequestBody TecnicoDTO objDTO){
+		Tecnico Obj = service.update(id,objDTO);
+		
+		return ResponseEntity.ok().body(new TecnicoDTO(Obj));
+	}
+	
+	@DeleteMapping(value = "/{id}")
+	public ResponseEntity<TecnicoDTO> detete(@PathVariable Integer id){
+		service.delite(id);
+		
+		return ResponseEntity.noContent().build();
+	}
 }

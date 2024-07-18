@@ -4,8 +4,11 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.support.Repositories;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import com.ramos.helpdesk.domain.Pessoa;
 import com.ramos.helpdesk.domain.Tecnico;
@@ -14,6 +17,8 @@ import com.ramos.helpdesk.repository.PessoaRepository;
 import com.ramos.helpdesk.repository.TecnicoRepository;
 import com.ramos.helpdesk.service.exceptions.DataIntegrityViolationException;
 import com.ramos.helpdesk.service.exceptions.ObjectNotFoundException;
+
+import jakarta.validation.Valid;
 
 @Service
 public class TecnicoService {
@@ -36,6 +41,25 @@ public class TecnicoService {
 		Tecnico newObj = new Tecnico(objDTO);
 		return tecnicoRepository.save(newObj);
 	}
+	
+	public Tecnico update(Integer id, @Valid TecnicoDTO objDTO) {
+		objDTO.setId(id);
+		Tecnico oldObj = findById(id);
+		validaPorCpfEEmail(objDTO);
+		oldObj = new Tecnico(objDTO);
+		
+		return tecnicoRepository.save(oldObj);
+	}
+	
+	public void delite(Integer id) {
+		Tecnico obj = findById(id);
+		if(obj.getChamado().size()>0) {
+			throw new DataIntegrityViolationException("Tecnico possui ordem de serviço e não pode ser deletado!");
+		}
+		
+		tecnicoRepository.deleteById(id);
+	}
+	
 	private void validaPorCpfEEmail(TecnicoDTO objDTO) {
 		
 		Optional<Pessoa> obj =  pessoaRepository.findByCpf(objDTO.getCpf());
@@ -48,4 +72,8 @@ public class TecnicoService {
 			throw new DataIntegrityViolationException("E-mail ja cadastrado no sistemas");
 		}
 	}
+	
+	
+
+	
 }
