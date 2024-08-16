@@ -1,14 +1,12 @@
 package com.ramos.helpdesk.security;
 
 import java.security.Key;
-import java.util.Base64;
 import java.util.Date;
-
-import javax.crypto.spec.SecretKeySpec;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -30,5 +28,35 @@ public class JWTUtil {
 				.setExpiration(new Date(System.currentTimeMillis()+expiration))
 				.signWith(key, SignatureAlgorithm.HS512)
 				.compact();
+	}
+
+	public boolean tokenValido(String token) {
+		Claims claims = getClaims(token);
+		if(claims!=null) {
+			String username = claims.getSubject();
+			Date expirationDate = claims.getExpiration();
+			Date now = new  Date(System.currentTimeMillis());
+			if(username!= null && expirationDate!=null && now.before(expirationDate)) {
+				return true;
+			}					
+		}
+		return false;
+	}
+	
+	private Claims getClaims(String token) {
+		try {
+			return Jwts.parser().setSigningKey(key.getEncoded()).parseClaimsJws(token).getBody();
+			//return Jwts.parser().setSigningKey(secret.getBytes()).parseClaimsJws(token).getBody();
+		} catch (Exception e) {
+			return null;
+		}
+	}
+
+	public String getUsername(String token) {
+		Claims claims = getClaims(token);
+		if(claims!=null) {
+			return claims.getSubject();
+		}
+		return null;
 	}
 }

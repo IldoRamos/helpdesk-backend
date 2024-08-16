@@ -5,33 +5,28 @@ import java.util.Arrays;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.ProviderManager;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.ramos.helpdesk.security.JWTAuthenticationFilter;
+import com.ramos.helpdesk.security.JWTAuthorizationFilter;
 import com.ramos.helpdesk.security.JWTUtil;
 
 @EnableWebSecurity
 @Configuration
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
 	private static final String[] PUBLIC_MATCH = { "/h2-console/**" };
@@ -44,15 +39,7 @@ public class SecurityConfig {
 
 	@Autowired(required=true)
 	private UserDetailsService userDetailsService;
-	/*
-	@Bean
-	public UserDetailsService userDetailsService() {
-		UserDetails user = User.withDefaultPasswordEncoder().username("email").password("password").roles("USER")
-				.build();
 
-		return new InMemoryUserDetailsManager(user);
-	}
-	*/
 
 	@Bean
 	public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
@@ -71,46 +58,28 @@ public class SecurityConfig {
     public JWTAuthenticationFilter jwtAuthenticationFilter(AuthenticationManager authenticationManager) {
         return new JWTAuthenticationFilter(authenticationManager, jwtUtil);
     }
-/*
+	
 	@Bean
-	protected JWTAuthenticationFilter jwtAuthenticationFilter(HttpSecurity http) throws Exception {
-		JWTAuthenticationFilter jwtAuthenticationFilter = new JWTAuthenticationFilter(authenticationManager(http),
-				jwtUtil);
-		jwtAuthenticationFilter.setFilterProcessesUrl("/login");
-		return jwtAuthenticationFilter;
+	public JWTAuthorizationFilter jwtAuthorizationFilter( AuthenticationManager authenticationManager, JWTUtil jwtUtil, UserDetailsService userDetailsService) {
+		return new JWTAuthorizationFilter(authenticationManager, jwtUtil, userDetailsService);
 	}
-*/
-	// @DependsOn
+
 	@Bean
-	protected SecurityFilterChain securityFilterChain(HttpSecurity http, JWTAuthenticationFilter jwtAuthenticationFilter) throws Exception {
-		// final AuthenticationManager authenticationManager =
-		// authenticationManager(http);
+	protected SecurityFilterChain securityFilterChain(HttpSecurity http, JWTAuthenticationFilter jwtAuthenticationFilter, JWTAuthorizationFilter jwtAuthorizationFilter) throws Exception {
+
 		if (Arrays.asList(env.getActiveProfiles()).contains("test")) {
 			http.headers().frameOptions().disable();
 		}
 
 		http.cors().and().csrf(csrf -> csrf.disable());
 		http.addFilter(jwtAuthenticationFilter);
-		//http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-		// http.addFilter(new JWTAuthenticationFilter(authenticationManager, jwtUtil));
+		http.addFilter(jwtAuthorizationFilter);
 		http.authorizeHttpRequests().requestMatchers(PUBLIC_MATCH).permitAll().anyRequest().authenticated();
 		http.sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
 		return http.getOrBuild();
 	}
 
-	/*
-	 * @Bean public AuthenticationManager authenticationManager( UserDetailsService
-	 * userDetailsService, PasswordEncoder passwordEncoder) {
-	 * DaoAuthenticationProvider authenticationProvider = new
-	 * DaoAuthenticationProvider();
-	 * authenticationProvider.setUserDetailsService(userDetailsService);
-	 * authenticationProvider.setPasswordEncoder(passwordEncoder);
-	 * 
-	 * return new ProviderManager(authenticationProvider); }
-	 */
-
-	
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 		auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder());
 	}
