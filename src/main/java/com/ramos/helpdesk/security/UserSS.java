@@ -13,12 +13,12 @@ import com.ramos.helpdesk.domain.enums.Perfil;
 public class UserSS implements UserDetails{
 
 	private static final long serialVersionUID = 1L;
+	
 	private Integer id;
 	private String email;
 	private String senha;
 	private Collection<? extends GrantedAuthority> authorities;
-	
-	
+
 	
 	public UserSS(Integer id, String email, String senha, Set<Perfil> perfis) {
 		super();
@@ -46,7 +46,7 @@ public class UserSS implements UserDetails{
 	public String getUsername() {
 		return email;
 	}
-
+	
 	@Override
 	public boolean isAccountNonExpired() {
 		return true;
@@ -66,5 +66,5 @@ public class UserSS implements UserDetails{
 	public boolean isEnabled() {
 		return true;
 	}
- 
+
 }

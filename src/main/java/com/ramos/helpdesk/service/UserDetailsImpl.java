@@ -13,13 +13,15 @@ import com.ramos.helpdesk.repository.PessoaRepository;
 import com.ramos.helpdesk.security.UserSS;
 
 @Service
-public class UserDetailsImpl  implements UserDetailsService{
+public class UserDetailsImpl implements UserDetailsService{
 
 	@Autowired
 	private PessoaRepository repository;
+	
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 		Optional<Pessoa> user = repository.findByEmail(email);
+		
 		if(user.isPresent()) {
 			return new UserSS(user.get().getId(), user.get().getEmail(), user.get().getSenha(), user.get().getPerfis());
 		}
