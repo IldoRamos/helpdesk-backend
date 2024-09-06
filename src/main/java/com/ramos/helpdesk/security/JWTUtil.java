@@ -23,10 +23,12 @@ public class JWTUtil {
 	private Key key = Keys.secretKeyFor(SignatureAlgorithm.HS512); // Generates a secure key
 
 	public String generateToken(String email) {
+		Key keys = Keys.hmacShaKeyFor(secret.getBytes());
 		return Jwts.builder()
 				.setSubject(email)
 				.setExpiration(new Date(System.currentTimeMillis()+expiration))
 				.signWith(key, SignatureAlgorithm.HS512)
+				//.signWith(key)
 				.compact();
 	}
 
@@ -46,6 +48,7 @@ public class JWTUtil {
 	private Claims getClaims(String token) {
 		try {
 			return Jwts.parser().setSigningKey(key.getEncoded()).parseClaimsJws(token).getBody();
+			//return Jwts.parser().setSigningKey(secret.getBytes()).parseClaimsJws(token).getBody();
 			//return Jwts.parser().setSigningKey(secret.getBytes()).parseClaimsJws(token).getBody();
 		} catch (Exception e) {
 			return null;

@@ -7,6 +7,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ramos.helpdesk.domain.Pessoa;
 import com.ramos.helpdesk.domain.Tecnico;
 import com.ramos.helpdesk.domain.enums.Perfil;
@@ -26,6 +27,7 @@ public class TecnicoDTO  implements Serializable{
 	protected String email;
 	@NotNull(message = "O campo Senha é requerido")
 	protected String senha;
+	@JsonProperty("perfis")
 	protected Set<Integer> perfis = new HashSet<>();
 	@JsonFormat(pattern = "dd/MM/yyyy")	
 	protected LocalDate dataCriacao = LocalDate.now();
@@ -58,8 +60,8 @@ public class TecnicoDTO  implements Serializable{
 	public String getSenha() {
 		return senha;
 	}
-	public Set<Perfil> getPerfis() {
-		return perfis.stream().map(x->Perfil.toEnum(x)).collect(Collectors.toSet());
+	public Set<Integer> getPerfis() {
+		return perfis;
 	}
 	public LocalDate getDataCriacao() {
 		return dataCriacao;
@@ -79,8 +81,8 @@ public class TecnicoDTO  implements Serializable{
 	public void setSenha(String senha) {
 		this.senha = senha;
 	}
-	public void setPerfis(Perfil perfis) {
-		this.perfis.add(perfis.getCodigo());
+	public void setPerfis(Set<Integer> perfis) {
+		this.perfis = perfis;
 	}
 	public void setDataCriacao(LocalDate dataCriacao) {
 		this.dataCriacao = dataCriacao;

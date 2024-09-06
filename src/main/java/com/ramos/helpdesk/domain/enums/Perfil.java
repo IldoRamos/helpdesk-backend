@@ -1,6 +1,11 @@
 package com.ramos.helpdesk.domain.enums;
 
-public enum Perfil {
+import java.io.Serializable;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+@JsonFormat(shape = JsonFormat.Shape.OBJECT)
+public enum Perfil{
 ADMIN(0,"ROLE_ADMIN"), CLIENTE(1,"ROLE_CLIENTE"), TECNICO(2,"ROLE_TECNICO");
 	
 	private Integer codigo;

@@ -16,6 +16,8 @@ import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -38,7 +40,8 @@ public abstract class Pessoa implements Serializable{
 	
 	@ElementCollection(fetch = FetchType.EAGER)
 	@CollectionTable(name = "PERFIS")
-	protected Set<Integer> perfis = new HashSet<>();
+	@Enumerated(EnumType.STRING) 
+	protected Set<Perfil> perfis = new HashSet<>();
 	
 	@JsonFormat(pattern = "dd/MM/yyyy")	
 	protected LocalDate dataCriacao = LocalDate.now();
@@ -86,10 +89,10 @@ public abstract class Pessoa implements Serializable{
 		this.senha = senha;
 	}
 	public Set<Perfil> getPerfis() {
-		return perfis.stream().map(x->Perfil.toEnum(x)).collect(Collectors.toSet());
+		return perfis;
 	}
 	public void addPerfis(Perfil perfis) {
-		this.perfis.add(perfis.getCodigo());
+		this.perfis.add(perfis);
 	}
 	public LocalDate getDataCriacao() {
 		return dataCriacao;
